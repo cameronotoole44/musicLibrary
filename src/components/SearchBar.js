@@ -1,15 +1,42 @@
-import { useContext } from 'react'
-import { SearchContext } from '../context/SearchContext'
+// import { useContext } from 'react';
+// import { SearchContext } from '../context/SearchContext';
 
-function Searchbar() {
-    const { term, handleSearch } = useContext(SearchContext)
+// function Searchbar() {
+//     const { term, handleSearch } = useContext(SearchContext)
+
+//     return (
+//         <form >
+//             <input ref={term} type="text" placeholder="Enter a search term here" />
+//             <button onClick={(e) => handleSearch(e, term.current.value)}>Submit</button>
+//         </form>
+//     )
+// };
+
+// export default Searchbar;
+
+import { useContext } from 'react';
+import { SearchContext } from '../context/SearchContext';
+
+function SearchBar() {
+    const { term, handleSearch } = useContext(SearchContext);
 
     return (
-        <form >
-            <input ref={term} type="text" placeholder="Enter a search term here" />
-            <button onClick={(e) => handleSearch(e, term.current.value)}>Submit</button>
+        <form className="search-form">
+            <input
+                ref={term}
+                type="text"
+                placeholder="Enter a search term here"
+                className="search-input"
+            />
+            <button
+                type="submit"
+                className="search-button"
+                onClick={(e) => handleSearch(e, term.current.value)}
+            >
+                Submit
+            </button>
         </form>
-    )
+    );
 }
 
-export default Searchbar
+export default SearchBar;
