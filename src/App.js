@@ -16,6 +16,7 @@ const App = () => {
   const [message, setMessage] = useState('Search for Music!');
 
   const handleSearch = async (e, term) => {
+    console.log()
     e.preventDefault()
     setMessage('Loading...')
     try {

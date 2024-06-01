@@ -1,4 +1,6 @@
 const fetchSearch = (searchTerm, path) => {
+    console.log(searchTerm)
+    console.log(path)
     return fetch(`http://localhost:4000/main/${searchTerm}`)
         .then(response => response.json())
         .then(resData => resData.results)

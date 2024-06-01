@@ -1,4 +1,4 @@
-/* General styles
+/* General styles */
 body {
   font-family: Arial, sans-serif;
   background-color: #f5f5f5;
@@ -32,7 +32,7 @@ button:hover {
 }
 
 /* SearchBar styles */
-/* .search-form {
+.search-form {
   margin-bottom: 20px;
 }
 
@@ -51,7 +51,7 @@ button:hover {
 }
 
 /* Gallery styles */
-/* .gallery {
+.gallery {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -75,4 +75,4 @@ button:hover {
 .gallery-item p {
   margin: 10px 0 0;
   font-size: 14px;
-} */
+}
