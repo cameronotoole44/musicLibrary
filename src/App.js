@@ -1,57 +1,81 @@
 import './App.css';
-import { useEffect, useState } from 'react';
+import { useState, Suspense, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import ArtistView from './components/ArtistView';
+import AlbumView from './components/AlbumView';
 import Gallery from './components/Gallery';
 import SearchBar from './components/SearchBar';
-import AlbumView from './components/AlbumView';
-import ArtistView from './components/ArtistView';
-import { Fragment } from 'react/cjs/react.production.min';
+import Spinner from './components/Spinner';
+import { DataContext } from './context/DataContext';
+import { SearchContext } from './context/SearchContext';
+import { createResource as fetchData } from './helper';
 
-function App() {
-  let [search, setSearch] = useState('')
-  let [message, setMessage] = useState('Search for Music!')
-  let [data, setData] = useState([])
+const App = () => {
+  const searchInput = useRef('');
+  const [data, setData] = useState(null);
+  const [message, setMessage] = useState('Search for Music!');
 
-  const API_URL = 'https://itunes.apple.com/search?term='
+  const handleSearch = async (e, term) => {
+    e.preventDefault()
+    setMessage('Loading...')
+    try {
+      const fetchedData = fetchData(term, 'main')
+      setData(fetchedData)
+      setMessage('')
+    } catch (error) {
+      console.error('Error fetching data:', error)
+      setMessage('Error fetching data')
+    }
+  };
 
-  useEffect(() => {
-    if (search) {
-      const fetchData = async () => {
-        document.title = `${search} Music`
-        const response = await fetch(API_URL + search)
-        const resData = await response.json()
-        if (resData.results.length > 0) {
-          return setData(resData.results)
+  const renderGallery = () => {
+    if (data) {
+      try {
+        const resource = data.result.read()
+        return (
+          <Suspense fallback={<Spinner />}>
+            <Gallery data={resource} />
+          </Suspense>
+        );
+      } catch (e) {
+        if (e instanceof Promise) {
+          return <Spinner />
         } else {
-          return setMessage('Not Found')
+          console.error('Error reading data:', e)
+          return <div>Error loading data</div>
         }
       }
-      fetchData()
+    } else {
+      return <div>{message}</div>;
     }
-  }, [search])
-
-  const handleSearch = (e, term) => {
-    e.preventDefault()
-    setSearch(term)
-  }
+  };
 
   return (
-    <div>
-      {message}
+    <div className="App">
       <Router>
         <Routes>
-          <Route path="/" element={
-            <Fragment>
-              <SearchBar handleSearch={handleSearch} />
-              <Gallery data={data} />
-            </Fragment>
-          } />
+          <Route
+            path="/"
+            element={
+              <>
+                <SearchContext.Provider value={{ term: searchInput, handleSearch: handleSearch }}>
+                  <SearchBar />
+                </SearchContext.Provider>
+                <DataContext.Provider value={data}>
+                  {renderGallery()}
+                </DataContext.Provider>
+              </>
+            }
+          />
           <Route path="/album/:id" element={<AlbumView />} />
           <Route path="/artist/:id" element={<ArtistView />} />
         </Routes>
       </Router>
     </div>
-  );
-}
+  )
+};
 
 export default App;
+
+
+
